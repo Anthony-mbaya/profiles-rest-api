@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response #when call api view return res
 from rest_framework import status #list of of handy http  EG. BAD HTTP_400_BAD_REQUEST
-from profiles_api import serializers #FILE created in profiles api
+from profiles_api import serializers,models #FILE created in profiles api
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from profiles_api import permissions
 
 # Create your views here.
 
@@ -101,3 +103,12 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         """handle removing object"""
         return Response({ 'http_method':'DELETE' })
+
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """handel create and update profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile,)
